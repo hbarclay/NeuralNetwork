@@ -1,9 +1,7 @@
 src = $(wildcard *.cc)
-obj = $(src:.cc=.o)
 
-
-nn: $(obj)
-	$(CXX) -o $@ $^
+nn: NeuralNetwork.o nn.o
+	$(CXX) -std=c++11 -o nn nn.cc NeuralNetwork.cc
 
 .PHONY: clean
 clean:

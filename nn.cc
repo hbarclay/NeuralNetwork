@@ -1,11 +1,17 @@
 
 
-
+#include <iostream>
 #include "NeuralNetwork.h"
 
 
 int main(void)
 {
-	return 0;
+	NeuralNetwork* n = new NeuralNetwork();
+	n->Initialize();
+
+	for(int i = 0; i < n->neurons.size(); i++)
+	{
+		std::cout << n->neurons[i]->bias << " ";
+	}
 }
 
