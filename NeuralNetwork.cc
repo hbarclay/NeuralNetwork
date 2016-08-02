@@ -7,34 +7,25 @@
 
 double NeuralNetwork::randomWeight()
 {
-	// FIXME possibly slow
-	std::normal_distribution<double> distribution(0.0, 1.0);
-	std::default_random_engine generator;
-	double number = distribution(generator);
+	double number = (*distribution)(generator);
 	return number;
 }
 
 double NeuralNetwork::randomBias()
 {
-	// FIXME possibly slow
-	std::normal_distribution<double> distribution(0.0, 1.0);
-	std::default_random_engine generator;
-	double number = distribution(generator);
+	double number = (*distribution)(generator);
 	return number;
 }
 
 void NeuralNetwork::Initialize()
 {
-
-	std::normal_distribution<double> distribution(0.0, 1.0);
-	std::default_random_engine generator;
+	distribution = new std::normal_distribution<double>(0.0, 1.0);
 
 	//construct vector of neurons
 	for(int i = 0; i < totalNeurons; i++ )
 	{
 		auto neuron = std::unique_ptr<Neuron>(new Neuron());
-		double number = distribution(generator);
-		neuron->bias = number;
+		neuron->bias = randomBias();
 		neurons.push_back(std::move(neuron));
 	}
 
@@ -122,6 +113,33 @@ std::unique_ptr<NeuralNetwork> NeuralNetwork::Clone()
 	}
 
 	return std::move(clone);
+}
+
+
+std::unique_ptr<NeuralNetwork> NeuralNetwork::Crossover(NeuralNetwork* other)
+{
+	std::unique_ptr<NeuralNetwork> offspring(new NeuralNetwork());
+	offspring->Initialize();
+
+	for(int i = 0; i < totalConnections; i++){
+		double num = 1.0 * rand() / RAND_MAX;
+		if(num < 0.5){
+			offspring->connections[i]->weight = this->connections[i]->weight;	
+		} else {
+			offspring->connections[i]->weight = other->connections[i]->weight;
+		}
+	}
+
+	for(int i = 0; i < totalNeurons; i++){
+		double num = 1.0 * rand() / RAND_MAX;
+		if(num < 0.5){
+			offspring->neurons[i]->bias = this->neurons[i]->bias;
+		} else {
+			offspring->neurons[i]->bias = other->neurons[i]->bias;
+		}
+	}
+
+	return std::move(offspring);
 }
 
 double NeuralNetwork::sigmoid(double x)

@@ -3,14 +3,18 @@
 #ifndef SRC_NEURALNETWORK
 #define SRC_NEURALNETWORK
 
+#include <cstdlib>
 #include <vector>
 #include <memory>
-
+#include <random>
 class NeuralNetwork
 {
 	double sigmoid(double x);
 	double randomWeight();
 	double randomBias();
+
+	std::normal_distribution<double>* distribution;
+	std::default_random_engine generator;
 public:
 	static const int numInputNeurons = 10;
 	static const int numOutputNeurons = 10;
@@ -46,7 +50,8 @@ public:
 	void setNeuronOutput(int id, double scale);
 	void feedForward();
 	std::unique_ptr<NeuralNetwork> Clone();
-
+	std::unique_ptr<NeuralNetwork> Crossover(NeuralNetwork* other);
+		
 };
 
 
