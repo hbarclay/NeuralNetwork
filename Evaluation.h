@@ -3,6 +3,8 @@
 #ifndef SRC_EVALUATION
 #define SRC_EVALUATION
 
+#include "NeuralNetwork.h"
+
 
 class Evaluation {
 
@@ -10,7 +12,11 @@ class Evaluation {
 
 
 public:
+	NeuralNetwork* network;
+	int id;
 
+	void Evaluate();
+	
 	double getPercentCorrect() {
 		return percentCorrect;
 	}

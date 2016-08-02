@@ -22,6 +22,7 @@ class Evolution {
 	void Elimination();
 	void CrossOver();
 	void Mutation();
+	void EvaluateAll();
 
 public:
 	void Run();	
