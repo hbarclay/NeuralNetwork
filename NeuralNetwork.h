@@ -19,7 +19,7 @@ public:
 	static const int numInputNeurons = 3;
 	static const int numOutputNeurons = 1;
 	static const int numLayer1Neurons = 3;
-	static const int numLayer2Neurons = 1;
+	static const int numLayer2Neurons = 3;
 	static const int totalNeurons = numInputNeurons + numOutputNeurons
 		+ numLayer1Neurons + numLayer2Neurons;
 	static const int totalConnections = 
