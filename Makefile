@@ -1,7 +1,8 @@
-src = $(wildcard *.cc)
+CFLAGS = -std=c++11
+
 
 nn: NeuralNetwork.o nn.o
-	$(CXX) -std=c++11 -o nn nn.cc NeuralNetwork.cc
+	g++ $(CFLAGS) -o nn nn.cc NeuralNetwork.cc Evolution.cc Evaluation.cc 
 
 .PHONY: clean
 clean:

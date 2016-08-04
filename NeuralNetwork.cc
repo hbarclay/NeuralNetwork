@@ -4,10 +4,11 @@
 #include <cmath>
 #include <memory>
 #include <random>
+#include <chrono>
 
 double NeuralNetwork::randomWeight()
 {
-	double number = (*distribution)(generator);
+	double number = (*distribution)(generator) + 1;
 	return number;
 }
 
@@ -19,7 +20,10 @@ double NeuralNetwork::randomBias()
 
 void NeuralNetwork::Initialize()
 {
-	distribution = new std::normal_distribution<double>(0.0, 1.0);
+	unsigned seed  = std::chrono::system_clock::now().time_since_epoch().count();
+	generator = *(new std::default_random_engine(seed));
+	distribution = new std::normal_distribution<double>(5.0, 2.0);
+	
 
 	//construct vector of neurons
 	for(int i = 0; i < totalNeurons; i++ )
@@ -82,21 +86,47 @@ void NeuralNetwork::setNeuronOutput(int id, double scale)
 
 void NeuralNetwork::feedForward()
 {
-	for(unsigned i = numInputNeurons; i < totalNeurons; i++){
+	/*for(unsigned i = numInputNeurons; i < totalNeurons; i++){
 		Neuron* neuron = neurons[i].get();
 		neuron->output = 0;
-	}
+	}*/
 	
-	for(unsigned i = 0; i < totalConnections; i++){
+	// TODO optimize
+	int num = numInputNeurons * numLayer1Neurons;
+
+	for(unsigned i = 0; i < num; i++){
 		Connection* connection = connections[i].get();
 		neurons[connection->to]->partialsum += 
 			neurons[connection->from]->output * connection->weight;	
 	}	
-	
-	for(unsigned i = numInputNeurons; i<totalNeurons; i++){
+
+	for(int i = numInputNeurons; i < numInputNeurons + numLayer1Neurons; i++){
 		Neuron* neuron = neurons[i].get();
 		neuron->output = sigmoid(neuron->partialsum + neuron->bias);
 	}
+
+	for(unsigned i = num; i < num + numLayer1Neurons * numLayer2Neurons; i++){
+		Connection* connection = connections[i].get();
+		neurons[connection->to]->partialsum += 
+			neurons[connection->from]->output * connection->weight;	
+	}
+	
+	for(unsigned i = numInputNeurons+ numLayer1Neurons; i<numInputNeurons+numLayer1Neurons+numLayer2Neurons; i++){
+		Neuron* neuron = neurons[i].get();
+		neuron->output = sigmoid(neuron->partialsum + neuron->bias);
+	}
+	
+	for(unsigned i = num + numLayer1Neurons * numLayer2Neurons; i < totalConnections; i++){
+		Connection* connection = connections[i].get();
+		neurons[connection->to]->partialsum += 
+			neurons[connection->from]->output * connection->weight;	
+	}
+
+	for(unsigned i = numInputNeurons+numLayer1Neurons+numLayer2Neurons; i < totalNeurons; i++){
+		Neuron* neuron = neurons[i].get();
+		neuron->output = sigmoid(neuron->partialsum + neuron->bias);
+	}
+	
 }
 
 std::unique_ptr<NeuralNetwork> NeuralNetwork::Clone()
@@ -145,4 +175,13 @@ std::unique_ptr<NeuralNetwork> NeuralNetwork::Crossover(NeuralNetwork* other)
 double NeuralNetwork::sigmoid(double x)
 {
 	return 1 / (1 + exp(-x));
+}
+
+void NeuralNetwork::Dump()
+{
+	std::cout << "Network: \n";
+	for(int i = 0; i < totalConnections; i++){
+		Connection *connection = connections[i].get();
+		std::cout << connection->weight << "\n";
+	}
 }

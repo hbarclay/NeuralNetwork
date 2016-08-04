@@ -10,7 +10,7 @@
 
 class Evolution {
 	
-	int maxGenerations;
+	int maxGenerations = 100;
 	int populationSize;
 
 	std::vector<std::unique_ptr<Evaluation>> evaluations;
@@ -24,6 +24,9 @@ class Evolution {
 	void Mutation();
 	void EvaluateAll();
 
+	static bool CompareEvaluationPercent(const std::unique_ptr<Evaluation> &e1,
+		const std::unique_ptr<Evaluation> &e2);
+
 public:
 	void Run();	
 	
@@ -32,6 +35,10 @@ public:
 		populationSize = pop;
 	}
 
+	
+	void setMaxGenerations(int g) {
+		maxGenerations = g;
+	}
 };
 
 #endif
