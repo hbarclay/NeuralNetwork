@@ -8,7 +8,7 @@
 
 double NeuralNetwork::randomWeight()
 {
-	double number = (*distribution)(generator) + 1;
+	double number = (*distribution)(generator);
 	return number;
 }
 
@@ -22,7 +22,7 @@ void NeuralNetwork::Initialize()
 {
 	unsigned seed  = std::chrono::system_clock::now().time_since_epoch().count();
 	generator = *(new std::default_random_engine(seed));
-	distribution = new std::normal_distribution<double>(5.0, 2.0);
+	distribution = new std::normal_distribution<double>(0.0, 1.0);
 	
 
 	//construct vector of neurons
@@ -90,6 +90,7 @@ void NeuralNetwork::feedForward()
 		Neuron* neuron = neurons[i].get();
 		neuron->output = 0;
 	}*/
+
 	
 	// TODO optimize
 	int num = numInputNeurons * numLayer1Neurons;
@@ -100,7 +101,7 @@ void NeuralNetwork::feedForward()
 			neurons[connection->from]->output * connection->weight;	
 	}	
 
-	for(int i = numInputNeurons; i < numInputNeurons + numLayer1Neurons; i++){
+	for(unsigned i = numInputNeurons; i < numInputNeurons + numLayer1Neurons; i++){
 		Neuron* neuron = neurons[i].get();
 		neuron->output = sigmoid(neuron->partialsum + neuron->bias);
 	}
@@ -174,7 +175,7 @@ std::unique_ptr<NeuralNetwork> NeuralNetwork::Crossover(NeuralNetwork* other)
 
 double NeuralNetwork::sigmoid(double x)
 {
-	return 1 / (1 + exp(-x));
+	return 30 * (1 / (1 + exp(-x)));
 }
 
 void NeuralNetwork::Dump()

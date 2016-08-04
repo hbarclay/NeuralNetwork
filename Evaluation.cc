@@ -16,7 +16,7 @@ void Evaluation::Evaluate()
 		
 		network->feedForward();
 		
-		std::cout << val1[i] + val2[i] + val3[i] << ":\t" << network->getOutput(NeuralNetwork::totalNeurons-1) << "\n";	
+//		std::cout << val1[i] + val2[i] + val3[i] << ":\t" << network->getOutput(NeuralNetwork::totalNeurons-1) << "\n";	
 		if(((int)network->getOutput(NeuralNetwork::totalNeurons-1)) == val1[i] + val2[i] + val3[i])
 			correct++;
 
