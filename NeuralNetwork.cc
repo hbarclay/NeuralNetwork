@@ -175,7 +175,7 @@ std::unique_ptr<NeuralNetwork> NeuralNetwork::Crossover(NeuralNetwork* other)
 
 double NeuralNetwork::sigmoid(double x)
 {
-	return 30 * (1 / (1 + exp(-x)));
+	return (1 / (1 + exp(-x)));
 }
 
 void NeuralNetwork::Dump()
