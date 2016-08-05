@@ -162,9 +162,18 @@ int Evaluation::getOutputNum(){
 	if(numn != 10)
 		throw std::runtime_error("num outputs");
 	
-	int nums[10];
+	double nums[10];
 	int total = NeuralNetwork::totalNeurons;
+	int highest = -1;
+	for(int i = 0; i< numn; i++){
+		if(network->getOutput(total-numn+i)>highest)
+			highest = i;
+		else if(network->getOutput(total-numn+i)==highest)
+			highest = -1;
+	}
 
+	return highest;
+/* changed to highest output value
 	for(int i = 0; i < numn; i++){
 		if(Clamp(network->getOutput(total-numn)) == 1.0) //FIXME
 			nums[i] = 1;
@@ -186,7 +195,7 @@ int Evaluation::getOutputNum(){
 	}
 
 	
-	return last;
+	return last;*/
 }
 
 
