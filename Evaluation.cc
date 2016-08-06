@@ -17,7 +17,7 @@ void Evaluation::Evaluate()
 //	network->Dump();	
 //	createTestSet();	
 	int correct = 0;
-	for(int i = 0; i < 10000; i++){	
+	for(int i = 0; i < 10000; i++){	// using only 10,000 of the mnist images
 		setInputNeurons(i);	
 
 	
