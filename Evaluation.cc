@@ -48,9 +48,6 @@ void Evaluation::createTestSet(){
 		val2[i] = rand() % 10 + 1;
 		val3[i] = rand() % 10 + 1;
 	}*/
-
-//	labels = readMnistLabels("/home/harrison/git-repos/NeuralNetworkCPU/datasets/MNIST/train-labels-idx1-ubyte");
-//	images = readMnistImages("/home/harrison/git-repos/NeuralNetworkCPU/datasets/MNIST/train-images-idx3-ubyte");
 }
 
 
@@ -173,29 +170,6 @@ int Evaluation::getOutputNum(){
 	}
 
 	return highest;
-/* changed to highest output value
-	for(int i = 0; i < numn; i++){
-		if(Clamp(network->getOutput(total-numn)) == 1.0) //FIXME
-			nums[i] = 1;
-		else
-			nums[i] = 0;
-	}
-	int last = -1;
-	bool prev = false;
-	// multiple is wrong
-	for(int i = 0; i<10; i++){
-		if(nums[i]){
-			if(prev)
-				return -1;
-			else 
-				prev = true;
-
-			last = i;
-		}
-	}
-
-	
-	return last;*/
 }
 
 

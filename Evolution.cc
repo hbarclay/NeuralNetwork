@@ -62,7 +62,6 @@ void Evolution::CrossOver()
 	std::vector<std::unique_ptr<NeuralNetwork>> newIndividuals;
 
 
-	// clone first two?
 	for(int i = 0; i < 2; i++){
 		Evaluation* evaluation = evaluations[i].get();
 		int id = evaluation->id;
@@ -80,14 +79,14 @@ void Evolution::CrossOver()
 
 		if(count >= populationSize) break;
 
-		if(eliminated.find(id) != eliminated.end()) continue; // FIXME ?
+		if(eliminated.find(id) != eliminated.end()) continue;
 
 		for(unsigned j = 0; j < evaluations.size(); j++){
 			Evaluation * evaluation2 = evaluations[j].get();
 			int id2 = evaluation2->id;
 
 			if(id==id2) continue;
-			if(eliminated.find(id2) != eliminated.end()) continue; // FIXME ?
+			if(eliminated.find(id2) != eliminated.end()) continue;
 
 			if( count >= populationSize) break;
 
@@ -118,6 +117,8 @@ void Evolution::CrossOver()
 	}
 }
 
+
+// TODO smarter mutations
 void Evolution::Mutation()
 {
 	double mutationProbability = 0.1;

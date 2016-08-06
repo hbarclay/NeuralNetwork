@@ -18,8 +18,8 @@ class NeuralNetwork
 public:
 	static const int numInputNeurons = 784;
 	static const int numOutputNeurons = 10;
-	static const int numLayer1Neurons = 300;
-	static const int numLayer2Neurons = 300;
+	static const int numLayer1Neurons = 50;
+	static const int numLayer2Neurons = 50;
 	static const int totalNeurons = numInputNeurons + numOutputNeurons
 		+ numLayer1Neurons + numLayer2Neurons;
 	static const int totalConnections = 
