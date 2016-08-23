@@ -86,12 +86,7 @@ void NeuralNetwork::setNeuronOutput(int id, double scale)
 
 void NeuralNetwork::feedForward()
 {
-	/*for(unsigned i = numInputNeurons; i < totalNeurons; i++){
-		Neuron* neuron = neurons[i].get();
-		neuron->output = 0;
-	}*/
-
-	
+		
 	// TODO optimize
 	int num = numInputNeurons * numLayer1Neurons;
 
@@ -126,8 +121,7 @@ void NeuralNetwork::feedForward()
 	for(unsigned i = numInputNeurons+numLayer1Neurons+numLayer2Neurons; i < totalNeurons; i++){
 		Neuron* neuron = neurons[i].get();
 		neuron->output = sigmoid(neuron->partialsum + neuron->bias);
-	}
-	
+	}	
 }
 
 std::unique_ptr<NeuralNetwork> NeuralNetwork::Clone()

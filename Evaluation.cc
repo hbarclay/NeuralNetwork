@@ -15,10 +15,12 @@ unsigned char** Evaluation::images;
 void Evaluation::Evaluate()
 {
 //	network->Dump();	
-//	createTestSet();	
 	int correct = 0;
-	for(int i = 0; i < 10000; i++){	// using only 10,000 of the mnist images
-		setInputNeurons(i);	
+	srand(time(NULL));
+	for(int i = 0; i < 64; i++){	
+		int r = rand() % 60000;	
+	
+		setInputNeurons(r);	
 
 	
 		network->feedForward();
@@ -28,7 +30,7 @@ void Evaluation::Evaluate()
 
 		
 	}
-	percentCorrect = (double) correct / (double) 10000;
+	percentCorrect = (double) correct / (double) 64;
 		
 }
 
@@ -43,11 +45,6 @@ void Evaluation::setInputNeurons(int trainingPass){
 
 
 void Evaluation::createTestSet(){
-/*	for(int i = 0; i < 30000; i++){
-		val1[i] = rand() % 10 + 1;
-		val2[i] = rand() % 10 + 1;
-		val3[i] = rand() % 10 + 1;
-	}*/
 }
 
 
