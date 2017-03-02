@@ -29,8 +29,10 @@ class Evolution {
 
 public:
 	void Run();	
+	void Output();	
+	void Dump();
+	void CountIdentical();
 	
-
 	void setPopulationSize(int pop){
 		populationSize = pop;
 	}

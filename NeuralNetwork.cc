@@ -22,7 +22,7 @@ void NeuralNetwork::Initialize()
 {
 	unsigned seed  = std::chrono::system_clock::now().time_since_epoch().count();
 	generator = *(new std::default_random_engine(seed));
-	distribution = new std::normal_distribution<double>(0.0, 1.0);
+	distribution = new std::normal_distribution<double>(0.0, 0.1);
 	
 
 	//construct vector of neurons
@@ -33,39 +33,41 @@ void NeuralNetwork::Initialize()
 		neurons.push_back(std::move(neuron));
 	}
 
-	//construct vector of connections
-	for(int i = 0; i < numInputNeurons; i++)
+	// construct vector of connections
+	// order of for loops is important, as the contiguous nature of 
+	// std::vector will be used to pass parts to openBLAS
+	for(int i = 0; i < numLayer1Neurons; i++)
+	{
+		for(int j = 0; j < numInputNeurons; j++)
+		{
+			auto connection = std::unique_ptr<Connection>(new Connection());
+			connection->from = j;
+			connection->to = numInputNeurons + i;
+			connection->weight = randomWeight();
+			connections.push_back(std::move(connection));
+		}
+	}
+
+
+	for(int i = 0; i < numLayer2Neurons; i++)
 	{
 		for(int j = 0; j < numLayer1Neurons; j++)
 		{
 			auto connection = std::unique_ptr<Connection>(new Connection());
-			connection->from = i;
-			connection->to = numInputNeurons + j;
+			connection->from = numInputNeurons + j;
+			connection->to = numInputNeurons + numLayer1Neurons + i;
 			connection->weight = randomWeight();
 			connections.push_back(std::move(connection));
 		}
 	}
 
-
-	for(int i = 0; i < numLayer1Neurons; i++)
+	for(int i = 0; i < numOutputNeurons; i++)
 	{
 		for(int j = 0; j < numLayer2Neurons; j++)
 		{
 			auto connection = std::unique_ptr<Connection>(new Connection());
-			connection->from = numInputNeurons + i;
-			connection->to = numInputNeurons + numLayer1Neurons + j;
-			connection->weight = randomWeight();
-			connections.push_back(std::move(connection));
-		}
-	}
-
-	for(int i = 0; i < numLayer2Neurons; i++)
-	{
-		for(int j = 0; j < numOutputNeurons; j++)
-		{
-			auto connection = std::unique_ptr<Connection>(new Connection());
-			connection->from = numInputNeurons + numLayer1Neurons + i;
-			connection->to = numInputNeurons + numLayer1Neurons + numLayer2Neurons + j;
+			connection->from = numInputNeurons + numLayer1Neurons + j;
+			connection->to = numInputNeurons + numLayer1Neurons + numLayer2Neurons + i;
 			connection->weight = randomWeight();
 			connections.push_back(std::move(connection));	
 		}
@@ -169,7 +171,9 @@ std::unique_ptr<NeuralNetwork> NeuralNetwork::Crossover(NeuralNetwork* other)
 
 double NeuralNetwork::sigmoid(double x)
 {
-	return (1 / (1 + exp(-x)));
+	double a = (1.0 / (1.0 + exp(-x)));
+//	std::cout << a << " ";
+	return a;
 }
 
 void NeuralNetwork::Dump()
