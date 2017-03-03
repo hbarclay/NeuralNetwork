@@ -140,12 +140,45 @@ void Evolution::CrossOver()
 	}
 }
 
+/*
 
 // TODO smarter mutations
 void Evolution::Mutation()
 {
 	int count1 = 0;
-	int count2 = 0;	
+	double mutationProbability = 0.03;
+	double mutationStrength = 0.5;
+	for(auto &nn : individuals){
+		for(auto x: nn->biases){
+			double num = 1.0 * rand() / RAND_MAX;
+			if(num < mutationProbability){
+				// FIXME
+				count1++;
+				double change = mutationStrength * (2.0 * rand() / RAND_MAX - 1.0);
+				x += x * change;
+			}
+		}
+
+		for(auto x: nn->weights){
+			double num = 1.0 * rand() / RAND_MAX;
+			if(num < mutationProbability){
+				// FIXME
+				count1++;
+				double change = mutationStrength * (2.0 * rand() / RAND_MAX - 1.0);
+				x += x * change; 
+			}
+		}
+	}
+
+	std::cout << count1 << " mutations introduced" << std::endl;
+}
+
+*/
+
+// TODO smarter mutations
+void Evolution::Mutation()
+{
+	int count1 = 0;
 	double mutationProbability = 0.03;
 	double mutationStrength = 0.5;
 	for(auto &nn : individuals){
@@ -205,7 +238,5 @@ void Evolution::EvaluateAll()
 
 	
 		evaluations.push_back(std::move(evaluation));
-		
 	}
-	
 }

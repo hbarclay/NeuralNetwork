@@ -22,12 +22,13 @@ void NeuralNetwork::Initialize()
 {
 	unsigned seed  = std::chrono::system_clock::now().time_since_epoch().count();
 	generator = *(new std::default_random_engine(seed));
-	distribution = new std::normal_distribution<double>(0.0, 0.1);
+	distribution = new std::normal_distribution<double>(0.0, 0.5);
 	
 
 	//construct vector of neurons
 	for(int i = 0; i < totalNeurons; i++ )
 	{
+		biases[i] = randomBias();
 		auto neuron = std::unique_ptr<Neuron>(new Neuron());
 		neuron->bias = randomBias();
 		neurons.push_back(std::move(neuron));
@@ -36,6 +37,10 @@ void NeuralNetwork::Initialize()
 	// construct vector of connections
 	// order of for loops is important, as the contiguous nature of 
 	// std::vector will be used to pass parts to openBLAS
+
+	for(double x : weights)
+		x = randomWeight();
+
 	for(int i = 0; i < numLayer1Neurons; i++)
 	{
 		for(int j = 0; j < numInputNeurons; j++)
@@ -45,6 +50,8 @@ void NeuralNetwork::Initialize()
 			connection->to = numInputNeurons + i;
 			connection->weight = randomWeight();
 			connections.push_back(std::move(connection));
+		
+			weights[i*numInputNeurons + j] = randomWeight();
 		}
 	}
 
@@ -58,6 +65,8 @@ void NeuralNetwork::Initialize()
 			connection->to = numInputNeurons + numLayer1Neurons + i;
 			connection->weight = randomWeight();
 			connections.push_back(std::move(connection));
+
+			weights[i*numLayer1Neurons + j] = randomWeight();
 		}
 	}
 
@@ -69,13 +78,16 @@ void NeuralNetwork::Initialize()
 			connection->from = numInputNeurons + numLayer1Neurons + j;
 			connection->to = numInputNeurons + numLayer1Neurons + numLayer2Neurons + i;
 			connection->weight = randomWeight();
-			connections.push_back(std::move(connection));	
+			connections.push_back(std::move(connection));
+
+			weights[i+numLayer2Neurons + j] = randomWeight();	
 		}
 	}	
 }
 
 double NeuralNetwork::getOutput(int id)
 {
+	//return outputs[i];
 	Neuron* neuron = neurons[id].get();
 	return neuron->output;
 }
@@ -84,8 +96,47 @@ void NeuralNetwork::setNeuronOutput(int id, double scale)
 {
 	Neuron* neuron = neurons[id].get();
 	neuron->output = scale;
+	
+	outputs[id] = scale;
+}
+/*
+void NeuralNetwork::feedForward()
+{
+	// openBLAS implementation of feedForward
+
+	// for(outputs[numInputNeurons:numInputNeurons+numLayer1Neurons-1])
+	// for each layer one neuron...
+	// output = sigmoid(outputs[0:numInputNeurons-1] . 
+			connections(weights)[(i-numInputNeurons)*numInputNeurons : (i-numInputNeurons)*numInputNeurons+numInputNeurons-1] + output.bias)
+
+
+	for(int i = numInputNeurons; i<numInputNeurons+numLayer1Neurons; i++) {
+		double* out;
+		cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 1, 1, numInputNeurons, 1.0, outputs, 1, weights, 1, 1.0, out, 1); 
+		output[i] = sigmoid();
+	}
+
+
+	double test[numLayer1Neurons];
+	memset(test, 0, numLayer1Neurons*sizeof(double));
+
+	for(int i = 0; i<numLayer1Neurons; i++) {
+		for(int j = 0; j < numInputNeurons; j++) {
+			test[i] += outputs[j] * weights[i*numInputNeurons+j] + biases[i+numInputNeurons];
+		}
+		test[i] = sigmoid(test[i]);
+	}
+
+	for(int i = 0; i < numLayer1Neurons; i++) {
+		if(test[i] != outputs[i+numInputNeurons]) {
+			std::cout << "OpenBLAS didnt work!!!";
+			throw std::runtime_error::runtime_error("aaaaa");
+		}
+	}
+
 }
 
+*/
 void NeuralNetwork::feedForward()
 {
 		
@@ -130,6 +181,15 @@ std::unique_ptr<NeuralNetwork> NeuralNetwork::Clone()
 {
 	std::unique_ptr<NeuralNetwork> clone(new NeuralNetwork);
 	clone->Initialize();
+
+	for(int i = 0; i < totalConnections; i++) {
+		clone->weights[i] = this->weights[i];
+	}
+
+	for(int i = 0; i < totalNeurons; i++) {
+		clone->biases[i] = this->biases[i];
+	}
+
 	
 	for(int i = 0; i < totalConnections; i++){
 		clone->connections[i]->weight = this->connections[i]->weight;
@@ -147,6 +207,25 @@ std::unique_ptr<NeuralNetwork> NeuralNetwork::Crossover(NeuralNetwork* other)
 {
 	std::unique_ptr<NeuralNetwork> offspring(new NeuralNetwork());
 	offspring->Initialize();
+
+
+	for(int i = 0; i < totalConnections; i++){
+		double num = 1.0 * rand() / RAND_MAX;
+		if(num < 0.5){
+			offspring->weights[i] = this->weights[i];	
+		} else {
+			offspring->weights[i] = other->weights[i];
+		}
+	}
+
+	for(int i = 0; i < totalNeurons; i++){
+		double num = 1.0 * rand() / RAND_MAX;
+		if(num < 0.5){
+			offspring->biases[i] = this->biases[i];
+		} else {
+			offspring->biases[i] = other->biases[i];
+		}
+	}
 
 	for(int i = 0; i < totalConnections; i++){
 		double num = 1.0 * rand() / RAND_MAX;

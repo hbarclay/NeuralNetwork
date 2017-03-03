@@ -45,6 +45,10 @@ public:
 	std::vector<std::unique_ptr<Neuron>> neurons;
 	std::vector<std::unique_ptr<Connection>> connections;	
 
+	double weights[totalConnections];
+	double biases[totalNeurons];
+	double outputs[totalNeurons];
+
 	void Dump();
 	void Initialize();
 	double getOutput(int id);
