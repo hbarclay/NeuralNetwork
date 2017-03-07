@@ -58,7 +58,7 @@ void Evolution::Elimination()
 {
 	eliminated.clear();
 	
-	for(unsigned i = evaluations.size() * .03; i < evaluations.size(); i++)
+	for(unsigned i = 0; i < evaluations.size(); i++)
 	{
 		Evaluation *evaluation = evaluations[i].get();
 		double eliminationProbability = (1.0 / populationSize) * i;
@@ -77,10 +77,11 @@ void Evolution::Elimination()
 // this was taken directly from Hetero-Mark simply to have a working function
 void Evolution::CrossOver()
 {
+	std::cout << "Eliminated " << eliminated.size() << " individuals" << std::endl;
 	int remaining = populationSize - eliminated.size();
 	int possibleCrossover = (remaining + 1) * remaining / 2;
 	
-	double probabilityDecrease = 0.002; //FIXME
+	double probabilityDecrease = 0.001; //FIXME
 
 	std::vector<std::unique_ptr<NeuralNetwork>> newIndividuals;
 
@@ -95,23 +96,23 @@ void Evolution::CrossOver()
 	}
 
 	int count = 2;
-	double probability = 0.6;
+	double probability = 0.7;
 	for(unsigned i = 0; i < evaluations.size(); i++){
 		Evaluation *evaluation = evaluations[i].get();
 		int id = evaluation->id;
 
-		if(count >= possibleCrossover) break;
+		if(count >= populationSize) break;
 
 		if(eliminated.find(id) != eliminated.end()) continue;
 
-		for(unsigned j = 0; j < evaluations.size()/2; j++){
+		for(unsigned j = 0; j < evaluations.size(); j++){
 			Evaluation * evaluation2 = evaluations[j].get();
 			int id2 = evaluation2->id;
 
 			if(id==id2) continue;
 			if(eliminated.find(id2) != eliminated.end()) continue;
 
-			if( count >= possibleCrossover) break;
+			if( count >= populationSize) break;
 
 			double num = 1.0 * rand() / RAND_MAX;
 
@@ -121,7 +122,7 @@ void Evolution::CrossOver()
 
 				newIndividuals.push_back(std::move(n));
 			}
-
+	
 			probability -= probabilityDecrease;
 		}
 	}
@@ -140,13 +141,13 @@ void Evolution::CrossOver()
 	}
 }
 
-/*
+
 
 // TODO smarter mutations
 void Evolution::Mutation()
 {
 	int count1 = 0;
-	double mutationProbability = 0.03;
+	double mutationProbability = 0.02;
 	double mutationStrength = 0.5;
 	for(auto &nn : individuals){
 		for(auto x: nn->biases){
@@ -173,8 +174,8 @@ void Evolution::Mutation()
 	std::cout << count1 << " mutations introduced" << std::endl;
 }
 
-*/
 
+/*
 // TODO smarter mutations
 void Evolution::Mutation()
 {
@@ -205,7 +206,7 @@ void Evolution::Mutation()
 
 	std::cout << count1 << " mutations introduced" << std::endl;
 }
-
+*/
 void Evolution::Run()
 {
 	RandomizePopulation();
@@ -218,9 +219,7 @@ void Evolution::Run()
 
 		//FIXME rundundant sorts
 		Elimination();
-		Sort();
 		CrossOver();
-		Sort();
 		Mutation();
 	}
 }

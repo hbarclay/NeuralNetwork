@@ -25,7 +25,7 @@ void Evaluation::Evaluate()
 	
 		network->feedForward();
 		
-		if(getOutputNum() == labels[i])
+		if(getOutputNum() == labels[r])
 			correct++;
 
 		
@@ -39,7 +39,7 @@ void Evaluation::setInputNeurons(int trainingPass){
 	if(NeuralNetwork::numInputNeurons != 784)
 		throw std::runtime_error("input neurons");
 	for(int i = 0; i < NeuralNetwork::numInputNeurons; i++){
-		network->setNeuronOutput(i, images[trainingPass][i]/256.0);
+		network->setNeuronOutput(i, images[trainingPass][i]/255.0);
 	}	
 }
 
@@ -150,7 +150,6 @@ void Evaluation::Test(){
 
 
 int Evaluation::getOutputNum(){
-
 	int numn = NeuralNetwork::numOutputNeurons;
 
 	if(numn != 10)
@@ -161,6 +160,7 @@ int Evaluation::getOutputNum(){
 	int highest = -1;
 	for(int i = 0; i< numn; i++){
 		if(network->getOutput(total-numn+i)>network->getOutput(total-numn+highest))
+		//if(Clamp(network->getOutput(total-numn+1)))
 			highest = i;
 	}
 
