@@ -12,6 +12,21 @@
 unsigned char* Evaluation::labels;
 unsigned char** Evaluation::images;
 
+
+void Evaluation::EvaluateFull()
+{
+	int correct = 0;
+	for(int i = 0; i< 60000; i++){
+		setInputNeurons(i);
+		network->feedForward();
+
+		if(getOutputNum() == labels[i])
+			correct++;
+	}
+	
+	percentCorrectFull = (double) correct / 60000.0;
+}
+
 void Evaluation::Evaluate()
 {
 //	network->Dump();	
@@ -30,7 +45,7 @@ void Evaluation::Evaluate()
 
 		
 	}
-	percentCorrect = (double) correct / (double) 64;
+	percentCorrect = (double) correct / 64.0;
 		
 }
 

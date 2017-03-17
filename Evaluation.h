@@ -10,7 +10,7 @@ class Evaluation {
 
 	typedef unsigned char uchar; 
 
-
+	double percentCorrectFull;
 	double percentCorrect;
 	static int reverseInt(int i);
 	int getOutputNum();
@@ -32,11 +32,16 @@ public:
 	
 	void Test();
 	void Evaluate();
+	void EvaluateFull();
 	void setInputNeurons(int trainingPass);
 	void createTestSet();
 	
 	double getPercentCorrect() {
 		return percentCorrect;
+	}
+
+	double getPercentCorrectFull() {
+		return percentCorrectFull;
 	}
 
 

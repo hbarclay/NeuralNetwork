@@ -6,19 +6,6 @@
 #include "NeuralNetwork.h"
 #include "Evaluation.h"
 
-void Evolution::CountIdentical() {
-	int c = 0;
-	for(int x=0; x < populationSize-1; x++){
-		for(int i = 0; i < NeuralNetwork::totalNeurons; i++){
-			if(individuals[x]->getOutput(i) != individuals[x+1]->getOutput(i))
-			return;
-		}
-			c++;
-	}
-
-	std::cout << "count: " << c << std::endl;
-}
-
 void Evolution::RandomizePopulation()
 {
 	for(int i = 0; i < populationSize; i++){
@@ -35,7 +22,7 @@ void Evolution::Sort()
 }
 
 
-void Evolution::Output() {
+void Evolution::Output() {	
 	std::cout << "\tBest Performer: " << evaluations[0]->getPercentCorrect() << "\n";
 	std::cout << "\tMedian Performer: " << evaluations[populationSize / 2]->getPercentCorrect() << "\n";
 	Dump();
@@ -53,7 +40,6 @@ bool Evolution::CompareEvaluationPercent(const std::unique_ptr<Evaluation> &e1,
 }
 
 
-// TODO eliminate based on fitness
 void Evolution::Elimination()
 {
 	eliminated.clear();
@@ -72,9 +58,6 @@ void Evolution::Elimination()
 
 
 
-// TODO crossover based on fitness
-// FIXME entire crossover function
-// this was taken directly from Hetero-Mark simply to have a working function
 void Evolution::CrossOver()
 {
 	std::cout << "Eliminated " << eliminated.size() << " individuals" << std::endl;
@@ -214,10 +197,12 @@ void Evolution::Run()
 		std::cout << "Generation: " << i << "\n";
 		EvaluateAll();
 		Sort();
+		if(i % 40 == 0) {
+			evaluations[0]->EvaluateFull();
+			std::cout << "Best Performer total performance: " << evaluations[0]->getPercentCorrectFull() << "\n";
+		}
 		Output();
-//		CountIdentical();
 
-		//FIXME rundundant sorts
 		Elimination();
 		CrossOver();
 		Mutation();
