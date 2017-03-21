@@ -23,9 +23,11 @@ void Evolution::Sort()
 
 
 void Evolution::Output() {	
-	std::cout << "\tBest Performer: " << evaluations[0]->getPercentCorrect() << "\n";
+	std::cout << "\tBest Performer:\t  " << evaluations[0]->getPercentCorrect() << "\n";
+	std::cout << "\tQ3:\t\t  " << evaluations[populationSize / 4]->getPercentCorrect() << "\n";
 	std::cout << "\tMedian Performer: " << evaluations[populationSize / 2]->getPercentCorrect() << "\n";
-	Dump();
+	std::cout << "\tQ1:\t\t  " << evaluations[3 * (populationSize / 4)]->getPercentCorrect() << "\n";
+	//Dump();
 }
 
 void Evolution::Dump() {
@@ -157,39 +159,6 @@ void Evolution::Mutation()
 	std::cout << count1 << " mutations introduced" << std::endl;
 }
 
-
-/*
-// TODO smarter mutations
-void Evolution::Mutation()
-{
-	int count1 = 0;
-	double mutationProbability = 0.03;
-	double mutationStrength = 0.5;
-	for(auto &nn : individuals){
-		for(auto &neuron: nn->neurons){
-			double num = 1.0 * rand() / RAND_MAX;
-			if(num < mutationProbability){
-				// FIXME
-				count1++;
-				double change = mutationStrength * (2.0 * rand() / RAND_MAX - 1.0);
-				neuron->bias += neuron->bias * change;
-			}
-		}
-
-		for(auto &connection: nn->connections){
-			double num = 1.0 * rand() / RAND_MAX;
-			if(num < mutationProbability){
-				// FIXME
-				count1++;
-				double change = mutationStrength * (2.0 * rand() / RAND_MAX - 1.0);
-				connection->weight += connection->weight * change; 
-			}
-		}
-	}
-
-	std::cout << count1 << " mutations introduced" << std::endl;
-}
-*/
 void Evolution::Run()
 {
 	RandomizePopulation();
@@ -206,6 +175,8 @@ void Evolution::Run()
 		Elimination();
 		CrossOver();
 		Mutation();
+
+		std::cout << std::endl;
 	}
 }
 
