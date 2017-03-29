@@ -46,10 +46,10 @@ void Evolution::Elimination()
 {
 	eliminated.clear();
 	
-	for(unsigned i = 0; i < evaluations.size(); i++)
+	for(unsigned i = populationSize/4; i < evaluations.size(); i++)
 	{
 		Evaluation *evaluation = evaluations[i].get();
-		double eliminationProbability = (1.0 / populationSize) * i;
+		double eliminationProbability = (1.0 / populationSize) * (i - populationSize/4);
 		double num = (1.0 * rand() / RAND_MAX);
 		if(num < eliminationProbability) {
 			eliminated.insert(evaluation->id);
@@ -132,7 +132,7 @@ void Evolution::CrossOver()
 void Evolution::Mutation()
 {
 	int count1 = 0;
-	double mutationProbability = 0.02;
+	double mutationProbability = 0.035;
 	double mutationStrength = 0.5;
 	for(auto &nn : individuals){
 		for(auto x: nn->biases){
