@@ -26,25 +26,7 @@ public:
 		numInputNeurons * numLayer1Neurons +
 		numLayer1Neurons * numLayer2Neurons +
 		numLayer2Neurons * numOutputNeurons;
-/*	
-	struct Neuron
-	{
-		double partialsum = 0;
-		double bias = 0;
-		double output = 0;
-	};
 
-	struct Connection
-	{
-		int from;
-		int to;
-		
-		double weight;
-	};
-
-	std::vector<std::unique_ptr<Neuron>> neurons;
-	std::vector<std::unique_ptr<Connection>> connections;	
-*/
 	double weights[totalConnections];
 	double biases[totalNeurons];
 	double outputs[totalNeurons];

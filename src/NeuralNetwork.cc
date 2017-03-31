@@ -50,112 +50,66 @@ void NeuralNetwork::setNeuronOutput(int id, double scale)
 
 void NeuralNetwork::feedForward()
 {
-/*		
-	int num = numInputNeurons * numLayer1Neurons;
-
-	for(unsigned i = 0; i < num; i++){
-		Connection* connection = connections[i].get();
-		neurons[connection->to]->partialsum += 
-			neurons[connection->from]->output * connection->weight;	
-	}	
-
-	for(unsigned i = numInputNeurons; i < numInputNeurons + numLayer1Neurons; i++){
-		Neuron* neuron = neurons[i].get();
-		neuron->output = sigmoid(neuron->partialsum + neuron->bias);
-	}
-
-	for(unsigned i = num; i < num + numLayer1Neurons * numLayer2Neurons; i++){
-		Connection* connection = connections[i].get();
-		neurons[connection->to]->partialsum += 
-			neurons[connection->from]->output * connection->weight;	
-	}
-	
-	for(unsigned i = numInputNeurons+ numLayer1Neurons; i<numInputNeurons+numLayer1Neurons+numLayer2Neurons; i++){
-		Neuron* neuron = neurons[i].get();
-		neuron->output = sigmoid(neuron->partialsum + neuron->bias);
-	}
-	
-	for(unsigned i = num + numLayer1Neurons * numLayer2Neurons; i < totalConnections; i++){
-		Connection* connection = connections[i].get();
-		neurons[connection->to]->partialsum += 
-			neurons[connection->from]->output * connection->weight;	
-	}
-
-	for(unsigned i = numInputNeurons+numLayer1Neurons+numLayer2Neurons; i < totalNeurons; i++){
-		Neuron* neuron = neurons[i].get();
-		neuron->output = sigmoid(neuron->partialsum + neuron->bias);
-	}
-*/
-
-	for(int i = numInputNeurons; i<numInputNeurons+numLayer1Neurons; i++) {
-		double out = 0;
-		int x = (i-numInputNeurons)*numInputNeurons;	
-		cblas_dgemm(
-			CblasRowMajor, 
-			CblasTrans, 
-			CblasNoTrans, 
-			1, 
-			1, 
-			numInputNeurons, 
-			1.0, 	
-			outputs,
-			1, 
-			weights + x, 
-			1, 
+	// m = 1, n = numLayer1Neurons, k = numInputNeurons
+	// CblasRowMajor so LDA, LDB, and LDC are column counts
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+			1, numLayer1Neurons, numInputNeurons, 
 			1.0, 
-			&out, 
-			1
-		);
-		outputs[i] = sigmoid(out + biases[i]);
-		//std::cout << outputs[i] << " ";
+			outputs, numInputNeurons, 
+			weights, numLayer1Neurons, 
+			1.0, 
+			outputs + numInputNeurons, numLayer1Neurons);
+
+
+	for(int i = numInputNeurons; i<numInputNeurons+numLayer1Neurons; i++)
+	{
+		outputs[i] = sigmoid(outputs[i] + biases[i]);
 	}
 
-	int numInputConnections = numInputNeurons * numLayer1Neurons;
-	for(int i = numInputNeurons+numLayer1Neurons; i<numInputNeurons+numLayer1Neurons+numLayer2Neurons; i++) {
-		double out = 0;
-		int x = numInputConnections + (i-numInputNeurons-numLayer1Neurons)*numLayer1Neurons;
-		cblas_dgemm(
-			CblasRowMajor,
-			CblasTrans,
-			CblasNoTrans,
-			1,
-			1,
-			numLayer1Neurons,
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+			1, numLayer2Neurons, numLayer1Neurons,
 			1.0,
-			outputs + numInputNeurons,
-			1,
-			weights + x,
-			1,
+			outputs + numInputNeurons, numLayer1Neurons,
+			weights + (numInputNeurons*numLayer1Neurons), numLayer2Neurons,
 			1.0,
-			&out,
-			1
-		);
-		outputs[i] = sigmoid(out + biases[i]);
+			outputs + numInputNeurons + numLayer1Neurons, numLayer2Neurons);
+
+	for(int i = numInputNeurons + numLayer1Neurons; i<numInputNeurons+numLayer1Neurons + numLayer2Neurons; i++)
+	{
+		outputs[i] = sigmoid(outputs[i] + biases[i]);
 	}
 
-	int numC = numInputConnections + (numLayer1Neurons*numLayer2Neurons);
-	int g = numInputNeurons + numLayer1Neurons + numLayer2Neurons;
-	for(int i = g; i<totalNeurons; i++) {
-		double out = 0;
-		int x = numC + (i-g)*numLayer2Neurons;
-		cblas_dgemm(
-			CblasRowMajor,
-			CblasTrans,
-			CblasNoTrans,
-			1,
-			1,
-			numLayer2Neurons,
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+			1, numOutputNeurons, numLayer2Neurons,
 			1.0,
-			outputs + numInputNeurons + numLayer1Neurons,
-			1,
-			weights + x,
-			1,
+			outputs + numInputNeurons + numLayer1Neurons, numLayer2Neurons,
+			weights + (numInputNeurons*numLayer1Neurons) + (numLayer1Neurons*numLayer2Neurons), numOutputNeurons,
 			1.0,
-			&out,
-			1
-		);
-		outputs[i] = sigmoid(out + biases[i]);
+			outputs + numInputNeurons + numLayer1Neurons + numLayer2Neurons, numOutputNeurons);
+
+	for(int i = numInputNeurons + numLayer1Neurons + numLayer2Neurons; i<totalNeurons; i++)
+	{
+		outputs[i] = sigmoid(outputs[i] + biases[i]);
 	}
+
+/*
+	Tested reference usage:
+
+	double in1[3] = {5, 6, 7};
+	double in2[12] = {1, 2, 3, 4,
+			1, 2, 3, 4,
+			1, 2, 3, 4};
+	
+	double c[4];
+
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+			1, 4, 3,
+			1.0,
+			in1, 3,
+			in2, 4,
+			1.0,
+			c, 4);
+*/
 }
 
 std::unique_ptr<NeuralNetwork> NeuralNetwork::Clone()
