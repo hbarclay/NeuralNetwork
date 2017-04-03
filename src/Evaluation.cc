@@ -1,5 +1,3 @@
-#include "Evaluation.h"
-#include "NeuralNetwork.h"
 #include <cstdlib>
 #include <random>
 #include <iostream>
@@ -7,6 +5,8 @@
 #include <fstream>
 #include <stdexcept>
 
+#include "Evaluation.h"
+#include "NeuralNetwork.h"
 
 
 unsigned char* Evaluation::labels;

@@ -1,6 +1,6 @@
-
 #include <string>
 #include <iostream>
+
 #include "NeuralNetwork.h"
 #include "Evolution.h"
 #include "Evaluation.h"
@@ -20,9 +20,6 @@ int main(int argc, char *args[])
 
 		evolution->Run();	
 	}
-
-//	Evaluation* e = new Evaluation();
-//	e->Test();
 
 	return 0;
 }

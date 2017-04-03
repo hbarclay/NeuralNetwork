@@ -1,7 +1,5 @@
-
-
-#ifndef SRC_EVOLUTION
-#define SRC_EVOLUTION
+#ifndef INCLUDE__EVOLUTION_H_
+#define INCLUDE__EVOLUTION_H_
 
 #include <set>
 #include <cstdlib>
@@ -43,4 +41,4 @@ public:
 	}
 };
 
-#endif
+#endif  // INCLUDE_EVOLUTION_H_

@@ -1,7 +1,5 @@
-
-
-#ifndef SRC_EVALUATION
-#define SRC_EVALUATION
+#ifndef INCLUDE_EVALUATION_H_
+#define INCLUDE_EVALUATION_H_
 
 #include "NeuralNetwork.h"
 #include <string>
@@ -10,7 +8,7 @@ class Evaluation {
 
 	typedef unsigned char uchar; 
 
-	double percentCorrectFull;
+	double percentCorrectFull = 0;
 	double percentCorrect;
 	static int reverseInt(int i);
 	int getOutputNum();
@@ -48,4 +46,4 @@ public:
 };
 
 
-#endif
+#endif  // INCLUDE_EVALUATION_H_

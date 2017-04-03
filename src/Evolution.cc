@@ -2,9 +2,14 @@
 #include <cstdio>
 #include <algorithm>
 #include <iostream>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+
 #include "Evolution.h"
 #include "NeuralNetwork.h"
 #include "Evaluation.h"
+#include "StatsFile.h"
 
 void Evolution::RandomizePopulation()
 {
@@ -28,6 +33,8 @@ void Evolution::Output() {
 	std::cout << "\tMedian Performer: " << evaluations[populationSize / 2]->getPercentCorrect() << "\n";
 	std::cout << "\tQ1:\t\t  " << evaluations[3 * (populationSize / 4)]->getPercentCorrect() << "\n";
 	//Dump();
+
+	
 }
 
 void Evolution::Dump() {
@@ -162,6 +169,15 @@ void Evolution::Mutation()
 void Evolution::Run()
 {
 	RandomizePopulation();
+	auto t = std::time(nullptr);
+	auto tm = *std::localtime(&t);
+/*
+	std::ostringstream oss;
+	oss << std::put_time(&tm, "%d-%m-%y-%h");
+	auto time = oss.str();
+	
+	StatsFile file("output-" + time);*/
+	StatsFile file("output-1.csv");
 	for(int i = 0; i < maxGenerations; i++){
 		std::cout << "Generation: " << i << "\n";
 		EvaluateAll();
@@ -171,6 +187,8 @@ void Evolution::Run()
 			std::cout << "Best Performer total performance: " << evaluations[0]->getPercentCorrectFull() << "\n";
 		}
 		Output();
+		file.WriteGeneration(i, evaluations[0]->getPercentCorrect(),
+					evaluations[0]->getPercentCorrectFull());
 
 		Elimination();
 		CrossOver();
