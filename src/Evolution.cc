@@ -73,7 +73,7 @@ void Evolution::CrossOver()
 	int remaining = populationSize - eliminated.size();
 	int possibleCrossover = (remaining + 1) * remaining / 2;
 	
-	double probabilityDecrease = 0.001; //FIXME
+	double probabilityDecrease = 0.00055; //FIXME
 
 	std::vector<std::unique_ptr<NeuralNetwork>> newIndividuals;
 
@@ -139,7 +139,7 @@ void Evolution::CrossOver()
 void Evolution::Mutation()
 {
 	int count1 = 0;
-	double mutationProbability = 0.035;
+	double mutationProbability = 0.039;
 	double mutationStrength = 0.5;
 	for(auto &nn : individuals){
 		for(auto x: nn->biases){
