@@ -1,2 +1,3 @@
 *.o
 nn
+OpenBLAS-build/
