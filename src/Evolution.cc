@@ -201,6 +201,8 @@ void Evolution::Run()
 void Evolution::EvaluateAll()
 {
 	evaluations.clear();
+	// TODO	add cuda call to parallelize evaluations
+	// -- each evauluation will have 3 cuda calls for feed forward
 	for(int i = 0; i < populationSize; i++){
 		auto evaluation = std::unique_ptr<Evaluation>(new Evaluation);
 		evaluation->id = i;
