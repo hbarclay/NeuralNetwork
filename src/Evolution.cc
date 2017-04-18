@@ -10,6 +10,7 @@
 #include "NeuralNetwork.h"
 #include "Evaluation.h"
 #include "StatsFile.h"
+#include "cuEval.h"
 
 void Evolution::RandomizePopulation()
 {
@@ -171,12 +172,7 @@ void Evolution::Run()
 	RandomizePopulation();
 	auto t = std::time(nullptr);
 	auto tm = *std::localtime(&t);
-/*
-	std::ostringstream oss;
-	oss << std::put_time(&tm, "%d-%m-%y-%h");
-	auto time = oss.str();
-	
-	StatsFile file("output-" + time);*/
+
 	StatsFile file("output-1.csv");
 	for(int i = 0; i < maxGenerations; i++){
 		std::cout << "Generation: " << i << "\n";
@@ -198,8 +194,23 @@ void Evolution::Run()
 	}
 }
 
+
 void Evolution::EvaluateAll()
 {
+
+	// copy all data to global memory:
+	//   -- weights/biases for all individuals
+	//   -- a test set subset matrix
+	
+
+	// invoke a kernel call for evaluations (launches sub-kernels,
+	// each on different streams (only dependencies are within one eval)
+	// parrallizes launch of individual evaluations
+	
+
+	// cudaMemcpyDeviceToHost Results
+	// consider parallelizing mutation/crossover
+
 	evaluations.clear();
 	// TODO	add cuda call to parallelize evaluations
 	// -- each evauluation will have 3 cuda calls for feed forward
