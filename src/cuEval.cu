@@ -9,7 +9,7 @@ __global__ void launchEvals()
 	// call matrixMul three times (different streams for each eval)
 }
 
-void launchEvals()
+void launchEvals(std::vector<std::unique_ptr<NeuralNetwork>>& individuals)
 {
 
 	// copy all data to global memory

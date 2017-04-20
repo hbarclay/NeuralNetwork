@@ -7,6 +7,9 @@
 #include <vector>
 #include <memory>
 #include <random>
+
+#include "constant_defines.def"
+
 class NeuralNetwork
 {
 	double sigmoid(double x);

@@ -197,7 +197,7 @@ void Evolution::Run()
 
 void Evolution::EvaluateAll()
 {
-
+	launchEvals(individuals);
 	// copy all data to global memory:
 	//   -- weights/biases for all individuals
 	//   -- a test set subset matrix
@@ -212,8 +212,6 @@ void Evolution::EvaluateAll()
 	// consider parallelizing mutation/crossover
 
 	evaluations.clear();
-	// TODO	add cuda call to parallelize evaluations
-	// -- each evauluation will have 3 cuda calls for feed forward
 	for(int i = 0; i < populationSize; i++){
 		auto evaluation = std::unique_ptr<Evaluation>(new Evaluation);
 		evaluation->id = i;
