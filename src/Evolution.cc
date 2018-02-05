@@ -10,7 +10,7 @@
 #include "NeuralNetwork.h"
 #include "Evaluation.h"
 #include "StatsFile.h"
-#include "cuEval.h"
+#include "RunGeneration.h"
 
 void Evolution::RandomizePopulation()
 {
@@ -197,30 +197,21 @@ void Evolution::Run()
 
 void Evolution::EvaluateAll()
 {
-	launchEvals(individuals);
-	// copy all data to global memory:
-	//   -- weights/biases for all individuals
-	//   -- a test set subset matrix
-	
-
-	// invoke a kernel call for evaluations (launches sub-kernels,
-	// each on different streams (only dependencies are within one eval)
-	// parrallizes launch of individual evaluations
-	
-
-	// cudaMemcpyDeviceToHost Results
-	// consider parallelizing mutation/crossover
-
 	evaluations.clear();
+
+	std::vector<std::unique_ptr<Evaluation>> *evals = new std::vector<std::unique_ptr<Evaluation>>();
 	for(int i = 0; i < populationSize; i++){
 		auto evaluation = std::unique_ptr<Evaluation>(new Evaluation);
 		evaluation->id = i;
 	
 		evaluation->network = individuals[i].get();
+		
 			
-		evaluation->Evaluate();
-
-	
-		evaluations.push_back(std::move(evaluation));
+		//evaluations.push_back(std::move(evaluation));
 	}
+	RunGeneration *rg = new RunGeneration(*evals); 
+	RunGeneration->launchEvals();
+	RunGeneration->syncResults();
+
+	evaluations = RunGeneration->getResultsVec();
 }
